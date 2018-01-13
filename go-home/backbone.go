@@ -7,18 +7,18 @@ import (
 
 // Used to parse and save a response from
 // a device following a Discover 'D' command
-func parseAndSaveDiscoveryPacket([]byte content) {
-
+func parseAndSaveDiscoveryPacket(content []byte) (error) {
+  return nil
 }
 
 // Used to parse and save a response from
 // a device following a Get 'G' command.
-func parseAndSaveGetPacket([]byte content) {
-
+func parseAndSaveGetPacket(content []byte) (error) {
+  return nil
 }
 
-func sendUDPPacket([]byte content, string ipAddr, string port) (error) {
-  conn, err = net.Dial("udp", ipAddr + ":" + port)
+func sendUDPPacket(content []byte, ipAddr string, port string) (error) {
+  conn, err := net.Dial("udp", ipAddr + ":" + port)
   if err != nil {
     return err
   }
@@ -27,7 +27,7 @@ func sendUDPPacket([]byte content, string ipAddr, string port) (error) {
   return nil
 }
 
-func parseUDPPacket([]byte content) {
+func parseUDPPacket(content []byte) (error) {
   switch content[0] {
   case 'D':
   // This is a "Discovery" packet for new devices
@@ -38,16 +38,22 @@ func parseUDPPacket([]byte content) {
   default:
     return nil
   }
+  return nil // I don't see how this could happen...
 }
 
 // Send a UDP "Discovery" packet to the
 // broadcast address.
 func sendDiscoverBroadcast() {
-  sendUDPPacket("D:", "255.255.255.255", "30000")
+  sendUDPPacket([]byte("D:"), "255.255.255.255", "30000")
 }
 
 func startUDPServer(port int) {
-  udpConn, err := net.ListenUDP("udp", ":" + string(port))
+  servAddr, err := net.ResolveUDPAddr("udp",":" + string(port))
+  if err != nil {
+    fmt.Println(err)
+  }
+
+  udpConn, err := net.ListenUDP("udp", servAddr)
   if err != nil {
     fmt.Println(err)
   }
