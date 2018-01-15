@@ -14,15 +14,6 @@ type Page struct {
     Body  []byte
 }
 
-func loadPage(title string) (*Page, error) {
-  filename := title + ".txt"
-  body, err := ioutil.ReadFile(filename)
-  if err != nil {
-    return nil, err
-  }
-  return &Page{Title: title, Body: body}, nil
-}
-
 func loadAsset(path string) ([]byte, error) {
   content, err := ioutil.ReadFile(path)
   if err != nil {
@@ -47,12 +38,14 @@ func getMimeType(extension string) (string) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/"):]
-	p, err := loadPage(title)
-	if err != nil {
-		p = &Page{Title: title}
-	}
+	p := &Page{Title: "go-home"}
 	t, _ := template.ParseFiles("views/index.html")
+	t.Execute(w, p)
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	p := &Page{Title: "Login"}
+	t, _ := template.ParseFiles("views/login.html")
 	t.Execute(w, p)
 }
 
@@ -71,6 +64,7 @@ func assetsHandler(w http.ResponseWriter, r *http.Request) {
 
 func startWebServer(port int) {
   http.HandleFunc("/", indexHandler)
+  http.HandleFunc("/login/", loginHandler)
   http.HandleFunc("/assets/", assetsHandler)
   http.ListenAndServe(":8080", nil)
 }

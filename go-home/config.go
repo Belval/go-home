@@ -1,7 +1,12 @@
 package main
 
 import (
+  "os"
+  "encoding/json"
+)
 
+var (
+  config *Config
 )
 
 type Config struct {
@@ -16,6 +21,13 @@ type Config struct {
   } `json:"DATABASE_CONFIG"`
 }
 
-func loadConfig() (*Config, error) {
-  return nil, nil
+func loadConfig() (error) {
+  var config Config
+  confFile, err := os.Open("config.json")
+  if err != nil {
+    return err
+  }
+  jsonParser := json.NewDecoder(confFile)
+  jsonParser.Decode(&config)
+  return nil
 }

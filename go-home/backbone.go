@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "net"
+  "strconv"
 )
 
 // Used to parse and save a response from
@@ -30,10 +31,10 @@ func sendUDPPacket(content []byte, ipAddr string, port string) (error) {
 func parseUDPPacket(content []byte) (error) {
   switch content[0] {
   case 'D':
-  // This is a "Discovery" packet for new devices
+    // This is a "Discovery" packet for new devices
     go parseAndSaveDiscoveryPacket(content)
   case 'G':
-  // This is a "Get" response from a queried device
+    // This is a "Get" response from a queried device
     go parseAndSaveGetPacket(content)
   default:
     return nil
@@ -48,7 +49,7 @@ func sendDiscoverBroadcast() {
 }
 
 func startUDPServer(port int) {
-  servAddr, err := net.ResolveUDPAddr("udp",":" + string(port))
+  servAddr, err := net.ResolveUDPAddr("udp",":" + strconv.Itoa(port))
   if err != nil {
     fmt.Println(err)
   }
